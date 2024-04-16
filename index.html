@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>API Call Example</title>
+        <script src="nihongo.js" defer></script> <!-- Include the external JS file -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function(event) {
+                getStats();
+                getQuestion();
+            });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                document.getElementById("checkButton").addEventListener("click", getAnswer);
+                document.getElementById("next").addEventListener("click", getQuestion);
+                document.getElementById("answer").addEventListener("keypress", function(e) {
+                    if (e.key === "Enter") {
+                        e.preventDefault(); // Prevent the default action for the Enter key in a form
+                        getAnswer();
+                    }
+                });
+            });
+        </script>
+
+    </head>
+
+    <body>
+        <label for="answer" style="font-weight: bold; font-size: 24px;">WELCOME to JAPANESE PRACTICE!</label><br>
+        <div id="stats">Stats</div>
+        <div id="question">Question</div><br>
+        <input type="text" id="answer">
+        <div id="status"></div>
+        <label id="result"></label>
+        <button id="checkButton">Check</button>
+        <button id="next">Next Question</button>
+
+    </body>
+</html>

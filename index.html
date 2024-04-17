@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>API Call Example</title>
+        <title>Nihongo Practice</title>
         <script src="nihongo.js" defer></script> <!-- Include the external JS file -->
         <script>
             document.addEventListener("DOMContentLoaded", function(event) {
@@ -15,6 +15,13 @@
             document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById("checkButton").addEventListener("click", getAnswer);
                 document.getElementById("next").addEventListener("click", getQuestion);
+                document.getElementById("ipbutton").addEventListener("click", setIp);
+                document.getElementById("ip").addEventListener("keypress", function(e) {
+                    if (e.key === "Enter") {
+                        e.preventDefault(); // Prevent the default action for the Enter key in a form
+                        setIp();
+                    }
+                });
                 document.getElementById("answer").addEventListener("keypress", function(e) {
                     if (e.key === "Enter") {
                         e.preventDefault(); // Prevent the default action for the Enter key in a form
@@ -27,14 +34,21 @@
     </head>
 
     <body>
-        <label for="answer" style="font-weight: bold; font-size: 24px;">WELCOME to JAPANESE PRACTICE!</label><br>
-        <div id="stats">Stats</div>
-        <div id="question">Question</div><br>
+        <label style="font-weight: bold; font-size: 24px;">WELCOME to JAPANESE PRACTICE!</label><br>
+        <div id="stats"></div>
+        <div id="status"></div><br>
+        <div id="question"></div><br>
+
         <input type="text" id="answer">
-        <div id="status"></div>
-        <label id="result"></label>
+        <div id="result"></div>
+        <label id="notes"></label><br>
+
         <button id="checkButton">Check</button>
-        <button id="next">Next Question</button>
+        <button id="next">Next Question</button><br><br>
+
+        <input type="text" id="ip">
+        <button id="ipbutton">Set Server IP</button><br>
+        <label id="iplabel"></label>
 
     </body>
 </html>

@@ -1,4 +1,5 @@
-//const hostIp = "http://192.168.1.124:8080/";
+//let hostIp = "http://192.168.1.124:8080/";
+//const hostIp = "localhost:8080/";
 const hostIp = "https://fbfb-175-177-41-59.ngrok-free.app/";
 const requestOptions = {
   method: "GET",
@@ -6,55 +7,49 @@ const requestOptions = {
   redirect: "follow"
 };
 
-function getAnswer() {
+function setIp(){
+    const ip = document.getElementById("ip").value;
+    hostIp = ip;
+}
 
+function getAnswer() {
     const userInput = document.getElementById("answer").value;
+    const statusCont = document.getElementById('status');
+    const result = document.getElementById('result');
+    const notes = document.getElementById('notes');
+
+    // Clear Previous Data
+    notes.innerHTML = ''; // Clear previous contents
+    statusCont.innerHTML = ''; // Clear previous contents
+
     fetch(hostIp + 'getAnswer' + "?input=" + userInput, requestOptions) // Use your actual endpoint here
         .then(response => response.json())
         .then((data) => {
-            // Assuming 'data' is the map/object returned from the server
-            const container = document.getElementById('result');
-            container.innerHTML = ''; // Clear previous contents
-            // Assuming 'container' is the div where you want to add the labels
-            const label = document.getElementById('status');
-            const value = data["status"];
-            label.textContent = `Status: ${value}`;
-            label.style.fontSize = '24px';
-            console.log(value)
-            if (value)
-                label.style.color = 'green';
+            // TRUE / FALSE
+            const answerStatus = data["status"];
+            result.textContent = `Status: ${answerStatus}`;
+            result.style.fontSize = '24px';
+            if (answerStatus)
+                result.style.color = 'green';
             else
-                label.style.color = 'red';
-            container.appendChild(document.createElement('br'));
+                result.style.color = 'red';
+            result.appendChild(document.createElement('br'));
 
+            // All correct words
             const correctWordsLabel = document.createElement('label');
-            const correctWordsValue = data["correctWords"];
-            correctWordsLabel.textContent = `correctWords: ${correctWordsValue}`;
-            container.appendChild(correctWordsLabel);
+            correctWordsLabel.textContent = `correctWords: ${data["correctWords"]}`;
+            notes.appendChild(correctWordsLabel);
 
-            const row = document.createElement('div'); // Create a new div as a row
-            const order = ["trueInRow", "currentCorrect", "currentAnswered", "currentSuccess","note"];
-            // Iterate over each entry in the object
-            for (const key of order) {
+            // Status
+            const statusKeys = ["trueInRow", "currentCorrect", "currentAnswered", "currentSuccess","note"];
+            for (const key of statusKeys) {
                 const value = data[key];
-                if (value){
-                    // Create a new label element
+                if (value != null){
                     const label = document.createElement('label');
-                    // Set the text of the label
                     label.textContent = `${key}: ${value}`;
-                    // Append the label to the row
-
-                    row.appendChild(label);
-
-                    // Optional: Add a separator (e.g., comma, space) between labels
-                    row.appendChild(document.createTextNode(', ')); // Adds a comma and a space
+                    statusCont.appendChild(label).appendChild(document.createTextNode(', ')); // Adds a comma and a space
                 }
-
             }
-
-            // Finally, append the row to the container
-            container.appendChild(row);
-
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -64,68 +59,42 @@ function getAnswer() {
 
 function getQuestion(){
 
-    const label = document.getElementById('status');
-    label.style.color = 'black';
-    label.textContent = `Status:`;
+    const previousResult = document.getElementById('result');
+    const previousNotes = document.getElementById('notes');
+    const answer = document.getElementById('answer');
+
+    // Clear previous data
+    previousResult.style.color = 'black';
+    previousResult.textContent = `Result:`;
+    answer.value = '';
+    previousNotes.value = '';
+    previousNotes.innerHTML = '';
+
+    // Get Next Question
     fetch(hostIp + 'getQuestion',requestOptions ) // Use your actual endpoint here
         .then(response => response.json())
         .then((data) => {
-            // Assuming 'data' is the map/object returned from the server
-            const container = document.getElementById('question');
-            container.innerHTML = ''; // Clear previous contents
-            const answer = document.getElementById('answer');
-            answer.value = ''; // Clear previous contents
-
-            const order2 = ["trueInRow", "currentCorrect", "currentAnswered", "currentSuccess"];
-            const row2 = document.createElement('div'); // Create a new div as a row
-            // Assuming `data` is your object
-            for (const key of order2) {
-                const value = data[key];
-                // Create a new label element
+            const questionDiv = document.getElementById('question');
+            questionDiv.textContent = ``;
+            // Category
+            const questionKeys = ["pickMode", "category"];
+            for (const key of questionKeys) {
                 const label = document.createElement('label');
-                // Set the text of the label
-                label.textContent = `${key}: ${value}`;
-                // Append the label to the row
-                row2.appendChild(label);
-
-                // Optional: Add a separator (e.g., comma, space) between labels
-                row2.appendChild(document.createTextNode(', ')); // Adds a comma and a space
-
+                label.textContent = `${key}: ${data[key]}`;
+                questionDiv.appendChild(label).appendChild(document.createTextNode(', '));
             }
-            container.appendChild(row2);
-            container.appendChild(document.createElement('br'));
-            const row = document.createElement('div'); // Create a new div as a row
-            const order = ["pickMode", "category"];
-            // Assuming `data` is your object
-            for (const key of order) {
-                const value = data[key];
-                // Create a new label element
-                const label = document.createElement('label');
-                // Set the text of the label
-                label.textContent = `${key}: ${value}`;
-                // Append the label to the row
-                row.appendChild(label);
-
-                // Optional: Add a separator (e.g., comma, space) between labels
-                row.appendChild(document.createTextNode(', ')); // Adds a comma and a space
-
-            }
-
-
+            // Question Stats
             let correctAnswers = data["correctlyAnswered"];
             let totalAnswered = data["totalAnswered"];
             const label = document.createElement('label');
             label.textContent = `accuracy: ${correctAnswers}/${totalAnswered}`;
-            // Append the label to the row
-            row.appendChild(label);
-            container.appendChild(row);
+            questionDiv.appendChild(label).appendChild(document.createElement('br'));
 
+            // Question Word
             const questionLabel = document.createElement('label');
-            let question = data["question"];
-            questionLabel.textContent = `question: ${question}`;
+            questionLabel.textContent = `question: ${data["question"]}`;
             questionLabel.style.fontSize = '24px';
-            // Finally, append the row to the container
-            container.appendChild(questionLabel);
+            questionDiv.appendChild(questionLabel);
 
         })
         .catch((error) => {
@@ -135,35 +104,22 @@ function getQuestion(){
 }
 
 function getStats(){
+    document.getElementById('iplabel').value = hostIp;
+    document.getElementById('iplabel').innerHTML = hostIp;
 
     fetch(hostIp + 'getStats', requestOptions) // Use your actual endpoint here
         .then(response => response.json()) // Parse the JSON from the response
         .then(data => {
-            // Assuming 'data' is the map/object returned from the server
-            const container = document.getElementById('stats');
-            container.innerHTML = ''; // Clear previous contents
+            const stats = document.getElementById('stats');
+            //stats.innerHTML = ''; // Clear previous contents
 
-            // Assuming 'container' is the div where you want to add the labels
-            const row = document.createElement('div'); // Create a new div as a row
             const order = ["vocabularySize", "globalSuccessRate", "trueInARowRecord"];
             // Iterate over each entry in the object
             for (const key of order) {
-                const value = data[key];
-                // Create a new label element
                 const label = document.createElement('label');
-                // Set the text of the label
-                label.textContent = `${key}: ${value}`;
-                // Append the label to the row
-                row.appendChild(label);
-
-                // Optional: Add a separator (e.g., comma, space) between labels
-                row.appendChild(document.createTextNode(', ')); // Adds a comma and a space
-
+                label.textContent = `${key}: ${data[key]}`;
+                stats.appendChild(label).appendChild(document.createTextNode(', '));
             }
-
-            // Finally, append the row to the container
-            container.appendChild(row);
-
         })
         .catch(error => console.error('Error fetching stats:', error));
 

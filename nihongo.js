@@ -1,6 +1,6 @@
 //let hostIp = "http://192.168.1.124:8080/";
 //const hostIp = "localhost:8080/";
-const hostIp = "https://fbfb-175-177-41-59.ngrok-free.app/";
+let hostIp = "https://d092-2407-c800-1f32-875-4959-f8e7-57c5-c9f1.ngrok-free.app/";
 const requestOptions = {
   method: "GET",
   headers: new Headers({"ngrok-skip-browser-warning": "test"}),
@@ -10,6 +10,9 @@ const requestOptions = {
 function setIp(){
     const ip = document.getElementById("ip").value;
     hostIp = ip;
+    document.getElementById('iplabel').innerHTML = hostIp;
+    getStats();
+    getQuestion();
 }
 
 function getAnswer() {
@@ -111,7 +114,7 @@ function getStats(){
         .then(response => response.json()) // Parse the JSON from the response
         .then(data => {
             const stats = document.getElementById('stats');
-            //stats.innerHTML = ''; // Clear previous contents
+            stats.innerHTML = ''; // Clear previous contents
 
             const order = ["vocabularySize", "globalSuccessRate", "trueInARowRecord"];
             // Iterate over each entry in the object

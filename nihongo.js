@@ -23,7 +23,6 @@ function getAnswer() {
 
     // Clear Previous Data
     notes.innerHTML = ''; // Clear previous contents
-    statusCont.innerHTML = ''; // Clear previous contents
 
     fetch(hostIp + 'getAnswer' + "?input=" + userInput, requestOptions) // Use your actual endpoint here
         .then(response => response.json())
@@ -44,6 +43,7 @@ function getAnswer() {
             notes.appendChild(correctWordsLabel);
 
             // Status
+            statusCont.innerHTML = ''; // Clear previous contents
             const statusKeys = ["trueInRow", "currentCorrect", "currentAnswered", "currentSuccess","note"];
             for (const key of statusKeys) {
                 const value = data[key];
